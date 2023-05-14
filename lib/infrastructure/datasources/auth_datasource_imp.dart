@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:prontoictus_flutter/config/constants.dart';
-import 'package:prontoictus_flutter/domain/entity/user.dart';
 import 'package:prontoictus_flutter/domain/entity/user_in.dart';
 import 'package:prontoictus_flutter/infrastructure/mappers/user_mapper.dart';
 import 'package:prontoictus_flutter/infrastructure/models/auth_response.dart';
@@ -15,9 +14,13 @@ class AuthDatasourceImpl extends AuthDataSource {
   @override
   Future<UserIn> login(String email, String password) async {
     // TODO: implement login
-    final response = await dio.post('/login',
-        data: jsonEncode({'email': email, 'password': password}));
-    return _jsonToUser(response.data);
+    try {
+      final response = await dio.post('/login',
+          data: jsonEncode({'email': email, 'password': password}));
+      return _jsonToUser(response.data);
+    } catch (err) {
+      throw Exception('Error controlado en el futuro');
+    }
   }
 
   @override

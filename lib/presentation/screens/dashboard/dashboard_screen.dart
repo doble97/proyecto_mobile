@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:prontoictus_flutter/helpers/validators.dart';
-import 'package:prontoictus_flutter/presentation/screens/screens.dart';
-import 'package:prontoictus_flutter/presentation/screens/widgets/generic_text_field.dart';
+import 'package:prontoictus_flutter/presentation/providers/auth/auth_provider.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -14,24 +13,31 @@ class DashboardScreen extends StatelessWidget {
       body: SafeArea(
           top: false,
           bottom: false,
-          child: SingleChildScrollView(
-              child: Container(
+          child: Container(
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top,
+                bottom: MediaQuery.of(context).padding.bottom),
             decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-              // Theme.of(context).colorScheme.secondary,
-              // Theme.of(context).colorScheme.primary
-              Colors.yellow, Colors.amber
-            ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
-            child: _FormView(),
-          ))),
+              gradient: LinearGradient(
+                colors: [
+                  Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+                  Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                stops: [0.0, 1.0],
+              ),
+            ),
+            child: StatisticsView(),
+          )),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             _showBottomSheet(context);
           },
           shape: const CircleBorder(),
-          child: const Icon(Icons.settings)),
+          child: const Icon(Icons.add_outlined)),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
     );
   }
@@ -42,6 +48,7 @@ class DashboardScreen extends StatelessWidget {
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
+            color: Colors.white70,
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0),
               topRight: Radius.circular(20.0),
@@ -52,7 +59,7 @@ class DashboardScreen extends StatelessWidget {
             children: [
               ListTile(
                 leading: Icon(
-                  Icons.watch_outlined,
+                  Icons.crop_portrait_outlined,
                   color: Theme.of(context).primaryColor,
                 ),
                 title: Text(
@@ -63,7 +70,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               ListTile(
                 leading: Icon(
-                  Icons.bluetooth_outlined,
+                  Icons.supervised_user_circle_outlined,
                   color: Theme.of(context).primaryColor,
                 ),
                 title: Text(
@@ -99,186 +106,141 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
-class _FormView extends StatefulWidget {
-  const _FormView({
+class StatisticsView extends ConsumerWidget {
+  const StatisticsView({
     super.key,
   });
 
   @override
-  State<_FormView> createState() => _FormViewState();
-}
-
-class _FormViewState extends State<_FormView> {
-  final _formKey = GlobalKey<FormState>();
-  @override
-  Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-              flex: 2,
-              child: Column(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.read(authProvider);
+    return Column(
+      children: [
+        Text(
+          'Información del usuario',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+        Card(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.shade900,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ElevatedButton(onPressed: () {}, child: Text('Código Ictus'))
-                ],
-              )),
-        ],
-      ),
+                  // Text('Información del usuario'),
+                  ListTile(
+                    title: Text('Nombre'),
+                    subtitle: Text(state.user!.user.name),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Apellido'),
+                    subtitle: Text(state.user!.user.lastName),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Email'),
+                    subtitle: Text(state.user!.user.email),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Amigos'),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('19'),
+                        Icon(
+                          Icons.touch_app_outlined,
+                          color: Colors.amber,
+                        )
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  ListTile(
+                    title: Text('Solicitudes pendientes'),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('3'),
+                        Icon(
+                          Icons.touch_app_outlined,
+                          color: Colors.amber,
+                        )
+                      ],
+                    ),
+                  ),
+                ]),
+          ),
+        ),
+        Card(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.shade900,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ListTile(
+                  title: Text('Numero de barajas'),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('100'),
+                      Icon(
+                        Icons.touch_app_outlined,
+                        color: Colors.amber,
+                      )
+                    ],
+                  ),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Numero de barajas que has compartido:'),
+                  subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('2'),
+                      Icon(
+                        Icons.touch_app_outlined,
+                        color: Colors.amber,
+                      )
+                    ],
+                  ),
+                ),
+                Divider(),
+                InkWell(
+                  onTap: () {
+                    print('inwek imprimiendo');
+                  },
+                  child: ListTile(
+                    title: Text('Numero de barajas que te han compartido'),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('9'),
+                        Icon(
+                          Icons.touch_app_outlined,
+                          color: Colors.amber,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
+      ],
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  //////////////////////////////////
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Container(
-//           padding: EdgeInsets.zero,
-//           decoration: const BoxDecoration(
-//               image: DecorationImage(
-//                   image: AssetImage('assets/images/dashboard/FondoHome.png'),
-//                   fit: BoxFit.fill)),
-//           child: Center(
-//             child: Container(
-//               color: Colors.amber,
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.end,
-//                 children: [
-//                   Image.asset('assets/images/shared/IOONLogo.png'),
-//                   ElevatedButton(onPressed: () {}, child: Text('bOTON')),
-//                   ElevatedButton(onPressed: () {}, child: Text('bOTON')),
-//                   ElevatedButton(onPressed: () {}, child: Text('bOTON')),
-//                   ElevatedButton(onPressed: () {}, child: Text('bOTON')),
-//                   SizedBox(height: 20),
-//                   Image.asset('assets/images/shared/IOONLogo.png'),
-//                 ],
-//               ),
-//             ),
-//           )),
-//       // floatingActionButton: FloatingActionButton(
-//       //   // onPressed: () {},
-//       //   child: Icon(
-//       //     Icons.settings,
-//       //     color: Theme.of(context).primaryColor,
-//       //   ),
-//       //   tooltip: 'Settings',
-//       //   backgroundColor: Colors.transparent,
-//       //   foregroundColor: Colors.white,
-//       //   shape: RoundedRectangleBorder(
-//       //     borderRadius: BorderRadius.circular(10.0),
-//       //   ),
-//       //   isExtended: true,
-//       //   heroTag: null,
-//       //   // Agregar el siguiente código para mostrar un menú
-//       //   onPressed: () {
-//       //     showModalBottomSheet(
-//       //       context: context,
-//       //       builder: (BuildContext context) {
-//       //         return Container(
-//       //           height: 200.0,
-//       //           child: Center(
-//       //             child: Text('Menú'),
-//       //           ),
-//       //         );
-//       //       },
-//       //     );
-//       //   },
-//       // ),
-//       floatingActionButton: FloatingActionButton(
-//         onPressed: () {},
-//         child: Icon(Icons.settings),
-//       ),
-//       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
-//     );
-//   }
-// }
-
-// class _PopMenu extends StatelessWidget {
-//   const _PopMenu({
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return PopupMenuButton<String>(
-//       itemBuilder: (BuildContext context) {
-//         return <PopupMenuEntry<String>>[
-//           PopupMenuItem<String>(
-//             value: 'option1',
-//             child: const Text('Option 1'),
-//           ),
-//           const PopupMenuDivider(),
-//           PopupMenuItem<String>(
-//             value: 'option2',
-//             child: const Text('Option 2'),
-//           ),
-//           PopupMenuItem<String>(
-//             value: 'option3',
-//             child: const Text('Option 3'),
-//           ),
-//         ];
-//       },
-//       onSelected: (String result) {
-//         // Do something with the selected option
-//       },
-//       icon: Icon(Icons.more_vert),
-//     );
-//   }
-// }
-
-
-
-
-
-
-
-
-

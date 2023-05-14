@@ -8,7 +8,7 @@ class AuthRepositoryImp extends AuthRepository {
 
   AuthRepositoryImp(this._dataSource);
   @override
-  Future<UserIn> login(String email, String password) {
+  Future<UserIn> login({required String email, required String password}) {
     return _dataSource.login(email, password);
   }
 
