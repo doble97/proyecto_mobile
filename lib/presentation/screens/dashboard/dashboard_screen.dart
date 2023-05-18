@@ -2,39 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:prontoictus_flutter/presentation/providers/auth/auth_provider.dart';
+import 'package:prontoictus_flutter/presentation/screens/widgets/main_container.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
   static String name = 'Dashboard Screen';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: SafeArea(
-          top: false,
-          bottom: false,
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top,
-                bottom: MediaQuery.of(context).padding.bottom),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Theme.of(context).colorScheme.secondary.withOpacity(0.5),
-                  Theme.of(context).colorScheme.primary.withOpacity(0.8),
-                ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                stops: [0.0, 1.0],
-              ),
-            ),
-            child: StatisticsView(),
-          )),
+      // body: SafeArea(
+      //     top: false,
+      //     bottom: false,
+      //     child: Container(
+      //       height: MediaQuery.of(context).size.height,
+      //       width: MediaQuery.of(context).size.width,
+      //       padding: EdgeInsets.only(
+      //           top: MediaQuery.of(context).padding.top,
+      //           bottom: MediaQuery.of(context).padding.bottom),
+      //       decoration: BoxDecoration(
+      //         gradient: LinearGradient(
+      //           colors: [
+      //             Theme.of(context).colorScheme.secondary.withOpacity(0.5),
+      //             Theme.of(context).colorScheme.primary.withOpacity(0.8),
+      //           ],
+      //           begin: Alignment.bottomCenter,
+      //           end: Alignment.topCenter,
+      //           stops: [0.0, 1.0],
+      //         ),
+      //       ),
+      //       child: StatisticsView(),
+      //     )),
+      body: MainContainer(child: StatisticsView()),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            _showBottomSheet(context);
+            _showBottomSheet(context, ref);
           },
           shape: const CircleBorder(),
           child: const Icon(Icons.add_outlined)),
@@ -42,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  void _showBottomSheet(BuildContext context) {
+  void _showBottomSheet(BuildContext context, WidgetRef ref) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -66,7 +68,9 @@ class DashboardScreen extends StatelessWidget {
                   'Añadir baraja',
                   style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
-                onTap: () {},
+                onTap: () {
+                  context.push('/add-deck');
+                },
               ),
               ListTile(
                 leading: Icon(
@@ -79,7 +83,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 onTap: () {
                   context.pop();
-                  context.push('/reset-password');
+                  context.push('/add-friend');
                 },
               ),
               ListTile(
@@ -92,7 +96,7 @@ class DashboardScreen extends StatelessWidget {
                   style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
                 onTap: () {
-                  context.go('/');
+                  ref.read(authProvider.notifier).logout();
                 },
               ),
               SizedBox(
@@ -153,7 +157,7 @@ class StatisticsView extends ConsumerWidget {
                     subtitle: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('19'),
+                        Text('${state.user!.friends}'),
                         Icon(
                           Icons.touch_app_outlined,
                           color: Colors.amber,
@@ -167,7 +171,7 @@ class StatisticsView extends ConsumerWidget {
                     subtitle: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('3'),
+                        Text('${state.user!.pendingRequests}'),
                         Icon(
                           Icons.touch_app_outlined,
                           color: Colors.amber,
@@ -191,11 +195,11 @@ class StatisticsView extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: Text('Numero de barajas'),
+                  title: Text('Tus barajas'),
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('100'),
+                      Text('${state.user!.decks}'),
                       Icon(
                         Icons.touch_app_outlined,
                         color: Colors.amber,
@@ -205,11 +209,11 @@ class StatisticsView extends ConsumerWidget {
                 ),
                 Divider(),
                 ListTile(
-                  title: Text('Numero de barajas que has compartido:'),
+                  title: Text('Barajas compartidas'),
                   subtitle: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('2'),
+                      Text('${state.user!.sharedDecks}'),
                       Icon(
                         Icons.touch_app_outlined,
                         color: Colors.amber,
@@ -223,11 +227,11 @@ class StatisticsView extends ConsumerWidget {
                     print('inwek imprimiendo');
                   },
                   child: ListTile(
-                    title: Text('Numero de barajas que te han compartido'),
+                    title: Text('Barajas seguidas'),
                     subtitle: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('9'),
+                        Text('${state.user!.followedDecks}'),
                         Icon(
                           Icons.touch_app_outlined,
                           color: Colors.amber,

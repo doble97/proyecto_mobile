@@ -42,4 +42,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
   void setUserState(UserIn userIn) {
     state = AuthState(user: userIn, userStatus: UserStatus.authenticated);
   }
+
+  void updateResources(UserIn userIn) {
+    state = AuthState(
+        message: state.message, userStatus: state.userStatus, user: userIn);
+  }
 }

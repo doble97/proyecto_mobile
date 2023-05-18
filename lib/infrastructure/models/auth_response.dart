@@ -35,21 +35,40 @@ class AuthResponse {
 
 class Data {
   Data({
+    required this.friends,
+    required this.pendingRequests,
+    required this.decks,
+    required this.sharedDecks,
+    required this.followedDecks,
     required this.token,
     required this.user,
   });
 
   final String token;
   final UserModel user;
+  final int friends;
+  final int pendingRequests;
+  final int decks;
+  final int sharedDecks;
+  final int followedDecks;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-        token: json["token"],
-        user: UserModel.fromJson(json["user"]),
-      );
+      token: json["token"],
+      user: UserModel.fromJson(json["user"]),
+      friends: json['friends'],
+      pendingRequests: json['pending_requests'],
+      decks: json["decks"],
+      sharedDecks: json["shared_decks"],
+      followedDecks: json["followed_decks"]);
 
   Map<String, dynamic> toJson() => {
         "token": token,
         "user": user.toJson(),
+        "friends": friends,
+        "pending_requests": pendingRequests,
+        "decks": decks,
+        "shared_decks": sharedDecks,
+        "followed_decks": followedDecks,
       };
 }
 
