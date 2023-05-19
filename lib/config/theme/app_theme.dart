@@ -76,11 +76,11 @@ MaterialColor myPrimaryColor = MaterialColor(
 class Apptheme {
   ThemeData getTheme() => ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      // brightness: Brightness.dark,
       colorScheme: ColorScheme(
         primary: myPrimaryColor,
         secondary: const Color(0xFF80CBC4),
-        surface: const Color(0xFF121212),
+        surface: Color.fromARGB(255, 246, 188, 188),
         background: const Color(0xFF121212),
         error: Color.fromARGB(255, 223, 164, 160),
         onPrimary: Colors.white,

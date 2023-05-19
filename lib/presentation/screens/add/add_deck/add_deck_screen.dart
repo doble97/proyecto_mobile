@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:prontoictus_flutter/domain/entity/deck.dart';
-import 'package:prontoictus_flutter/presentation/providers/auth/auth_provider.dart';
+
 import 'package:prontoictus_flutter/presentation/providers/deck/deck_repository_provider.dart';
 import 'package:prontoictus_flutter/presentation/screens/widgets/main_container.dart';
 
@@ -16,6 +15,16 @@ class AddDeckScreen extends ConsumerStatefulWidget {
 
 class AddDeckScreenState extends ConsumerState<AddDeckScreen> {
   String? _selectedValue = "Spanish";
+  final _formKey = GlobalKey<FormState>();
+  final textController = TextEditingController();
+  String nameDeck = "";
+  int idLanguage = 1;
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,72 +32,82 @@ class AddDeckScreenState extends ConsumerState<AddDeckScreen> {
           child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40),
         child: Form(
+            key: _formKey,
             child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            TextFormField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: Colors.grey,
-                      width: 1.0,
-                    ),
-                  ),
-                  labelText: 'Añadir baraja',
-                  labelStyle: TextStyle(color: Colors.white)),
-            ),
-            ///////////////////////
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text('Idioma de la baraja '),
-                DropdownButton<String>(
-                  value: _selectedValue,
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedValue = newValue!;
-                    });
+                TextFormField(
+                  controller: textController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Inserta un nombre para tu baraja';
+                    }
+                    nameDeck = value;
+                    return null;
                   },
-                  style: TextStyle(color: Colors.white),
-                  items: <String>[
-                    'English',
-                    'Spanish',
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 1.0,
+                        ),
+                      ),
+                      labelText: 'Añadir baraja',
+                      labelStyle: TextStyle(color: Colors.white)),
                 ),
+                ///////////////////////
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Idioma de la baraja '),
+                    DropdownButton<String>(
+                      value: _selectedValue,
+                      onChanged: (String? newValue) {
+                        idLanguage = newValue == 'Spanish' ? 1 : 2;
+                        setState(() {
+                          _selectedValue = newValue!;
+                        });
+                      },
+                      style: TextStyle(color: Colors.white),
+                      items: <String>[
+                        'English',
+                        'Spanish',
+                      ].map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        ref.read(deckStateProvider.notifier).state =
+                            DeckState(language: idLanguage, name: nameDeck);
+                        // textController.clear();
+                        context.pushReplacement('/add-word');
+                      }
+                    },
+                    child: Text('Crear baraja'))
               ],
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  // final state = ref.read(authProvider);
-                  // try{
-                  //   await
-                  // }catch(err){
-
-                  // }
-                  // ref.read(deckRepositoryProvider).create(
-                  //     userId: state.user!.user.id,
-                  //     resource: Deck(name: 'mobile', language: 1));
-                  ref.read(deckStateProvider.notifier).state =
-                      DeckState(Deck(name: 'Pruebas flutter', language: 1));
-                  context.push('/add-word');
-                },
-                child: Text('Crear baraja'))
-          ],
-        )),
+            )),
       )),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            context.pushReplacement('/dashboard');
+          },
+          child: Icon(Icons.keyboard_return_outlined)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
     );
   }
 }

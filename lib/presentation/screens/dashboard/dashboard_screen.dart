@@ -11,28 +11,6 @@ class DashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      // body: SafeArea(
-      //     top: false,
-      //     bottom: false,
-      //     child: Container(
-      //       height: MediaQuery.of(context).size.height,
-      //       width: MediaQuery.of(context).size.width,
-      //       padding: EdgeInsets.only(
-      //           top: MediaQuery.of(context).padding.top,
-      //           bottom: MediaQuery.of(context).padding.bottom),
-      //       decoration: BoxDecoration(
-      //         gradient: LinearGradient(
-      //           colors: [
-      //             Theme.of(context).colorScheme.secondary.withOpacity(0.5),
-      //             Theme.of(context).colorScheme.primary.withOpacity(0.8),
-      //           ],
-      //           begin: Alignment.bottomCenter,
-      //           end: Alignment.topCenter,
-      //           stops: [0.0, 1.0],
-      //         ),
-      //       ),
-      //       child: StatisticsView(),
-      //     )),
       body: MainContainer(child: StatisticsView()),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
@@ -50,7 +28,7 @@ class DashboardScreen extends ConsumerWidget {
       builder: (BuildContext context) {
         return Container(
           decoration: const BoxDecoration(
-            color: Colors.white70,
+            color: Color.fromARGB(255, 96, 72, 1),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(20.0),
               topRight: Radius.circular(20.0),
@@ -69,7 +47,7 @@ class DashboardScreen extends ConsumerWidget {
                   style: TextStyle(color: Theme.of(context).primaryColor),
                 ),
                 onTap: () {
-                  context.push('/add-deck');
+                  context.pushReplacement('/add-deck');
                 },
               ),
               ListTile(
@@ -117,7 +95,7 @@ class StatisticsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.read(authProvider);
+    final state = ref.watch(authProvider);
     return Column(
       children: [
         Text(

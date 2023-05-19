@@ -43,8 +43,22 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthState(user: userIn, userStatus: UserStatus.authenticated);
   }
 
-  void updateResources(UserIn userIn) {
+  void updateResources(
+      {int friends = 0,
+      int pendingRequests = 0,
+      int decks = 0,
+      int sharedDecks = 0,
+      int followedDecks = 0}) {
     state = AuthState(
-        message: state.message, userStatus: state.userStatus, user: userIn);
+        message: state.message,
+        userStatus: state.userStatus,
+        user: UserIn(
+            token: state.user!.token,
+            user: state.user!.user,
+            friends: state.user!.friends + friends,
+            pendingRequests: state.user!.pendingRequests + pendingRequests,
+            decks: state.user!.decks + decks,
+            sharedDecks: state.user!.sharedDecks + sharedDecks,
+            followedDecks: state.user!.followedDecks + followedDecks));
   }
 }

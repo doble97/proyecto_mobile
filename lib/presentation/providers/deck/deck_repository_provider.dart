@@ -11,25 +11,27 @@ import 'package:prontoictus_flutter/presentation/providers/auth/auth_provider.da
 class DeckState {
   final Deck deck;
 
-  DeckState(this.deck);
+  // DeckState(this.deck);
 
-  // DeckState({String name = "", int language = 0})
-  //     : deck = Deck(name: name, language: language);
+  DeckState({String name = "", int language = 0})
+      : deck = Deck(name: name, language: language);
 }
 
 final deckStateProvider = StateProvider<DeckState>((ref) {
-  return DeckState(Deck(language: 0, name: 'hhhhh'));
+  return DeckState();
 });
 final deckRepositoryProvider = FutureProvider.autoDispose<Deck>((ref) async {
-  final repository = CrudRepositoryImpl(CrudDatasourceImpl());
+  final repository = CrudRepositoryImpl(DeckCrudDatasourceImpl());
 
   try {
     final deckResource = ref.watch(deckStateProvider);
-    print('Datos ${deckResource.deck!.name}');
+    print('Datos ${deckResource.deck.name}');
     final deck = await repository.create(
         userId: ref.read(authProvider).user!.user.id,
-        resource: deckResource.deck!);
+        resource: deckResource.deck);
     print('exito en el deck');
+    deckResource.deck;
+    ref.read(authProvider.notifier).updateResources(decks: 1);
     return deck;
   } catch (err) {
     print('Error en el deck $err');
