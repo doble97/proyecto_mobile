@@ -4,11 +4,19 @@ import 'package:riverpod/riverpod.dart';
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final loginCallback = ref.watch(authRepositoryProvider).login;
-  return AuthNotifier(loginCallback: loginCallback);
+  final registerCallback = ref.watch(authRepositoryProvider).register;
+  return AuthNotifier(
+      loginCallback: loginCallback, registerCallback: registerCallback);
 });
 
 typedef LoginCallback = Future<UserIn> Function(
     {required String email, required String password});
+
+typedef RegisterCallback = Future<UserIn> Function(
+    {required String email,
+    required String password,
+    required String name,
+    required String lastName});
 
 enum UserStatus { authenticated, notAuthenticated }
 
@@ -23,8 +31,10 @@ class AuthState {
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
-  AuthNotifier({required this.loginCallback}) : super(AuthState());
+  AuthNotifier({required this.loginCallback, required this.registerCallback})
+      : super(AuthState());
   LoginCallback loginCallback;
+  RegisterCallback registerCallback;
 
   Future<void> login({required String email, required String password}) async {
     try {
@@ -32,6 +42,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
       setUserState(user);
     } catch (err) {
       logout(msg: 'Error generico en provider');
+    }
+  }
+
+  Future<void> register(
+      {required String email,
+      required String password,
+      required String name,
+      required String lastName}) async {
+    try {
+      final UserIn user = await registerCallback(
+          name: name, lastName: lastName, email: email, password: password);
+      setUserState(user);
+    } catch (err) {
+      logout(
+          msg: 'No se pudo registrar el usuario, quizás ya tengas una cuenta');
     }
   }
 

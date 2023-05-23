@@ -112,10 +112,10 @@ class _FormViewState extends ConsumerState<_FormView> {
               )),
           GestureDetector(
             onTap: () {
-              context.push('/reset-password');
+              context.pushReplacement('/register');
             },
             child: Text(
-              '¿Olvidó la contraseña?',
+              '¿No tienes cuenta?',
               style: TextStyle(
                 color: Theme.of(context).primaryColor,
               ),
@@ -124,12 +124,5 @@ class _FormViewState extends ConsumerState<_FormView> {
         ],
       ),
     );
-  }
-
-  Future<void> llamada(String email, String password, WidgetRef ref) async {
-    // final repositorio = AuthRepositoryImp(AuthDatasourceImpl());
-    // final UserIn user = await repositorio.login(email, password);
-    // print('usuario ${user.token.token}');
-    // context.go('/dashboard');
   }
 }

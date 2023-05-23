@@ -4,14 +4,8 @@ import 'package:prontoictus_flutter/infrastructure/datasources/crud_datasource_i
 import 'package:prontoictus_flutter/infrastructure/repositories/crud_repository_impl.dart';
 import 'package:prontoictus_flutter/presentation/providers/auth/auth_provider.dart';
 
-// final deckRepositoryProvider = Provider((ref) {
-//   return CrudRepositoryImpl(CrudDatasourceImpl());
-// });
-
 class DeckState {
   final Deck deck;
-
-  // DeckState(this.deck);
 
   DeckState({String name = "", int language = 0})
       : deck = Deck(name: name, language: language);

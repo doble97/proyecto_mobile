@@ -12,7 +12,6 @@ class AuthDatasourceImpl extends AuthDataSource {
   final dio = ClientDio().dioInstance;
   @override
   Future<UserIn> login(String email, String password) async {
-    // TODO: implement login
     try {
       final response = await dio.post('/login',
           data: jsonEncode({'email': email, 'password': password}));
@@ -24,9 +23,21 @@ class AuthDatasourceImpl extends AuthDataSource {
 
   @override
   Future<UserIn> register(
-      String email, String password, String name, String lastName) {
-    // TODO: implement register
-    throw UnimplementedError();
+      String email, String password, String name, String lastName) async {
+    try {
+      final response = await dio.post('/register',
+          data: jsonEncode({
+            'name': name,
+            "last_name": lastName,
+            "email": email,
+            "password": password,
+            "password_confirmation": password
+          }));
+      return _jsonToUser(response.data);
+    } catch (err) {
+      print(err);
+      throw Exception("Error al crear usuario");
+    }
   }
 
   UserIn _jsonToUser(Map<String, dynamic> json) {
